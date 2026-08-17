@@ -7,7 +7,7 @@
 # The values below are the ones the study actually ran on, kept as a worked
 # example. Three machines were involved:
 #   /tf/...            training/inference container
-#   /media/sizhuo/...  external HDD holding masks and comparison products
+#   /mnt/products/...  external HDD holding masks and comparison products
 #   /data/...          merge/publication host
 
 # ── Model predictions ────────────────────────────────────────────────────────
@@ -65,9 +65,9 @@ sampling:
 # ── Masks ────────────────────────────────────────────────────────────────────
 masks:
   # OSM land polygons clipped to the German border — keeps sea pixels out.
-  land: /media/sizhuo/Other_Tree_Products/masks/germany_land_in_border.gpkg
+  land: /mnt/products/Other_Tree_Products/masks/germany_land_in_border.gpkg
   # GADM 4.1 Germany, level 1 (states).
-  gadm: /media/sizhuo/Other_Tree_Products/masks/gadm41_DEU.gpkg
+  gadm: /mnt/products/Other_Tree_Products/masks/gadm41_DEU.gpkg
 
 # ── Validation ───────────────────────────────────────────────────────────────
 validation_root: ${training_root}

@@ -13,9 +13,10 @@ them 2024 and 2025 acquisitions. Completing fills exactly those rows and
 leaves every existing value untouched, so the numbers already published do
 not move.
 
-The prediction paths in the published table point at the external HDD
-(``/media/sizhuo/...``). ``--path-prefix`` rewrites that root to wherever
-the archive is now.
+``our_pred_path`` in the published table still carries the absolute root of
+the external HDD the table was computed on. ``--path-prefix`` rewrites that
+root to wherever the archive sits now — read the prefix off the first row
+of the table and pass it as ``OLD=NEW``.
 
 Examples::
 
@@ -24,7 +25,7 @@ Examples::
         --in  publication/tiles/tile_treecover_products.csv \\
         --out publication/tiles/tile_treecover_products_complete.csv \\
         --products-root /tf/Other_Tree_Products \\
-        --path-prefix /media/sizhuo/8016214b-0b21-4d3d-ae36-40f5a4e338f0/Germany=/tf/Germany
+        --path-prefix /mnt/products/Germany=/tf/Germany
 
     # Recompute one state from scratch
     python scripts/10_extract_tile_products.py --states SH \\
@@ -70,7 +71,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--products-root", type=Path, required=True)
     p.add_argument("--path-prefix", default=None, metavar="OLD=NEW",
                    help="Rewrite the root of our_pred_path, e.g. "
-                        "/media/sizhuo/.../Germany=/tf/Germany")
+                        "/mnt/products/Germany=/tf/Germany")
     p.add_argument("--limit", type=int, default=None, help="Stop after N tiles.")
     p.add_argument("--no-progress", action="store_true")
     p.add_argument("-v", "--verbose", action="store_true")
