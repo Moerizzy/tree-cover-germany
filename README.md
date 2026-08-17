@@ -387,8 +387,13 @@ phenological stages whatever the input imbalance, and a canopy 10 m above a
 
 ## License
 
-Not yet chosen — see the open questions below. Apache-2.0 is suggested for
-the code and CC-BY-4.0 for the map product.
+The code in this repository is Apache-2.0 — see `LICENSE`.
+
+The map product is licensed separately as CC-BY-4.0 and is published on
+Zenodo, not here. The third-party layers the pipeline reads keep their own
+terms: CORINE Land Cover and the Copernicus HRL Tree Cover Density are
+Copernicus data, the OSM land polygons are ODbL, and GADM 4.1 permits
+academic use but not redistribution — so it is referenced, never shipped.
 
 ## Citation
 
