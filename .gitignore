@@ -1,0 +1,55 @@
+# Machine-specific configuration — copy paths.example.yaml and edit.
+configs/paths.yaml
+
+# Model weights live on Zenodo, not in git (the B5 checkpoint is 339 MB).
+weights/
+*.pth
+*.ckpt
+
+# Outputs
+results/
+figures/output/
+*.log
+
+# Geodata that should never be committed
+*.tif
+*.tiff
+*.jp2
+*.laz
+*.las
+*.vrt
+*.gpkg
+*.parquet
+# ...except the tiny example tile used by the tests.
+!tests/data/**/*.tif
+
+# Large tile indices — these belong on Zenodo alongside the weights.
+*.geojson
+!configs/**/*.geojson
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Notebooks — this repo is deliberately notebook-free. If you need one for
+# exploration, keep it out of version control.
+*.ipynb
+.ipynb_checkpoints/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Seafile
+*SFConflict*

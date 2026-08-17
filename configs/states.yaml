@@ -1,0 +1,181 @@
+# German federal states — everything that differs between them, in one place.
+#
+# Replaces the per-state config cells that were previously duplicated across
+# 08_prepare_state_geojsons / _bavaria / _brandenburg, 08c, 08d and the four
+# 04_run_inference_*.py scripts.
+#
+# Fields
+#   name          Full name, for figures and reports.
+#   gadm_hasc     HASC_1 suffix in gadm41_DEU.gpkg. Differs from `code` for
+#                 Brandenburg only (BB -> BR).
+#   pred_dir      Folder name under the predictions root. NRW is stored as
+#                 "NW" (the official state key) while the rest of the project
+#                 calls it NRW — this is the mapping.
+#   epsg          CRS of the state's official tile grid.
+#   utm_zone      UTM zone number, used to build/parse tile names.
+#   ortho / lidar URL templates. `{tile_name}` is substituted from the tile
+#                 index. `tile_name_rule` names a transform in
+#                 treecover.io.tile_index applied before substitution.
+#
+# `null` means: not established for this project. States without a lidar
+# entry were mapped but not used for LiDAR validation (only NRW, BB and BY
+# were — see the paper's Testing section).
+
+defaults:
+  epsg: 25832
+  utm_zone: 32
+  tile_size_m: 1000
+  target_resolution_m: 0.20
+
+states:
+  BW:
+    name: Baden-Württemberg
+    gadm_hasc: BW
+    pred_dir: BW
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  BY:
+    name: Bayern
+    gadm_hasc: BY
+    pred_dir: BY
+    ortho:
+      url_template: "https://geodaten.bayern.de/odd_data/dop20rgb/{tile_name}.tif"
+      tile_name_rule: strip_zone_prefix   # '32706_5585' -> '706_5585'
+    lidar:
+      url_template: "https://geodaten.bayern.de/odd_data/laser/{tile_name}.laz"
+      tile_name_rule: strip_zone_prefix
+
+  BE:
+    name: Berlin
+    gadm_hasc: BE
+    pred_dir: BE
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  BB:
+    name: Brandenburg
+    gadm_hasc: BR                # <- the one state where HASC != folder code
+    pred_dir: BB
+    epsg: 25833
+    utm_zone: 33
+    ortho:
+      url_template: "https://data.geobasis-bb.de/geobasis/daten/dop/dop20rgb/{tile_name}.tif"
+      tile_name_rule: keep
+    lidar:
+      url_template: "https://data.geobasis-bb.de/geobasis/daten/als/laz/als_{tile_name}.zip"
+      tile_name_rule: zone_dash   # '33304_5862' -> '33304-5862'
+
+  HB:
+    name: Bremen
+    gadm_hasc: HB
+    pred_dir: HB
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  HH:
+    name: Hamburg
+    gadm_hasc: HH
+    pred_dir: HH
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  HE:
+    name: Hessen
+    gadm_hasc: HE
+    pred_dir: HE
+    # Hessen serves DOP20 via WCS rather than per-tile files.
+    ortho:
+      url_template: null
+      wcs: "https://inspire-hessen.de/raster/dop20/ows?SERVICE=WCS&VERSION=2.1.0"
+    lidar: {url_template: null, tile_name_rule: null}
+
+  MV:
+    name: Mecklenburg-Vorpommern
+    gadm_hasc: MV
+    pred_dir: MV
+    epsg: 25833
+    utm_zone: 33
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  NI:
+    name: Niedersachsen
+    gadm_hasc: NI
+    pred_dir: NI
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  NW:
+    name: Nordrhein-Westfalen
+    aliases: [NRW]               # the project used both spellings
+    gadm_hasc: NW
+    pred_dir: NW
+    ortho:
+      # 10 cm JP2, resampled to 20 cm during inference.
+      url_column: "asset.dop10rgbi.href"
+      tile_name_rule: keep
+    lidar:
+      url_template: "https://www.opengeodata.nrw.de/produkte/geobasis/hm/3dm_l_las/3dm_l_las/{tile_name}.laz"
+      tile_name_rule: keep
+    ndsm:
+      url_column: "asset.ndom50.href"   # 50 cm nDOM, resampled to 20 cm
+
+  RP:
+    name: Rheinland-Pfalz
+    gadm_hasc: RP
+    pred_dir: RP
+    ortho:
+      url_template: null
+      meta4: "https://geobasis-rlp.de/data/dop20rgb/current/meta4/dop20rgb_jp2_07.meta4"
+    lidar: {url_template: null, tile_name_rule: null}
+
+  SL:
+    name: Saarland
+    gadm_hasc: SL
+    pred_dir: SL
+    ortho:
+      url_template: null
+      atom_feed: "https://geoportal.saarland.de/mapbender/php/mod_inspireDownloadFeed.php?id=f808a27f-16c5-40a2-bd0d-9ff49fdb0a35&type=SERVICE&generateFrom=wmslayer&layerid=49805"
+    lidar: {url_template: null, tile_name_rule: null}
+
+  SN:
+    name: Sachsen
+    gadm_hasc: SN
+    pred_dir: SN
+    epsg: 25833
+    utm_zone: 33
+    ortho: {url_template: null, tile_name_rule: null}
+    lidar: {url_template: null, tile_name_rule: null}
+
+  ST:
+    name: Sachsen-Anhalt
+    gadm_hasc: ST
+    pred_dir: ST
+    epsg: 25833
+    utm_zone: 33
+    ortho:
+      url_template: null
+      atom_feed: "https://geodatenportal.sachsen-anhalt.de/arcgisinspire/rest/directories/web/INSPIRE_ALKIS/ALKIS_OI_DOP20_MapServer/serviceoi.xml"
+    lidar: {url_template: null, tile_name_rule: null}
+
+  SH:
+    name: Schleswig-Holstein
+    gadm_hasc: SH
+    pred_dir: SH
+    ortho:
+      url_template: null
+      index_geojson: "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/single.php?file=DOP20_SH__Massendownload.geojson&id=4"
+    lidar: {url_template: null, tile_name_rule: null}
+
+  TH:
+    name: Thüringen
+    gadm_hasc: TH
+    pred_dir: TH
+    ortho:
+      url_template: null
+      wms: "https://www.geoproxy.geoportal-th.de/geoproxy/services/DOP?SERVICE=WMS&VERSION=1.3.0&LAYERS=th_dop&CRS=EPSG:25832"
+    lidar: {url_template: null, tile_name_rule: null}
+
+# States with LiDAR reference data used in the accuracy assessment.
+validation_states: [NW, BB, BY]

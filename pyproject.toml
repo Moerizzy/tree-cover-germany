@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "treecover"
+version = "1.0.0"
+description = "Wall-to-wall tree cover mapping of Germany at 20 cm from open-licensed aerial imagery"
+readme = "README.md"
+# 3.8 is what the inference/training container ships (Ubuntu 20.04). All
+# modern annotation syntax is used via `from __future__ import annotations`,
+# so the source reads as 3.10+ while still importing on 3.8.
+requires-python = ">=3.8"
+authors = [
+    { name = "Moritz Lucas", email = "moritz.lucas@uni-osnabrueck.de" },
+    { name = "Martin Brandt" },
+    { name = "Björn Waske" },
+]
+keywords = [
+    "remote sensing", "tree cover", "semantic segmentation",
+    "SegFormer", "trees outside forests", "orthophotos",
+]
+
+# Core dependencies — everything except training/inference (see [project.optional-dependencies]).
+# Pinned to major versions only; the pipeline is not sensitive to patch releases.
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "geopandas>=0.13",
+    # Vector I/O engine. Required, not optional: GeoPandas < 0.14 combined
+    # with Fiona >= 1.10 cannot read any file (GeoPandas calls the removed
+    # fiona.path), which is exactly the pairing the inference container has.
+    # See treecover.io.vector.
+    "pyogrio>=0.7",
+    "shapely>=2.0",
+    "rasterio>=1.3",
+    "pyproj>=3.5",
+    "scipy>=1.10",
+    "scikit-image>=0.21",
+    "PyYAML>=6.0",
+    "tqdm>=4.65",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+# Model training and inference. Install the torch build matching your CUDA
+# version first (see https://pytorch.org), then `pip install -e ".[dl]"`.
+dl = [
+    "torch>=2.0",
+    "transformers>=4.35",
+    "albumentations>=1.3",
+    "torchmetrics>=1.0",
+    "scikit-learn>=1.3",
+]
+# LiDAR point-cloud processing for the validation reference data.
+lidar = [
+    "laspy[laszip]>=2.5",
+]
+# Figure reproduction.
+viz = [
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "contextily>=1.4",
+]
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+treecover = "treecover.cli:main"
+
+[project.urls]
+Repository = "https://github.com/CHANGEME/tree-cover-germany"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

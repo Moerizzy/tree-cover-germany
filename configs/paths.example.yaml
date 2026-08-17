@@ -1,0 +1,87 @@
+# Machine-specific paths. Copy to `paths.yaml` and edit — `paths.yaml` is
+# gitignored so everyone can keep their own without touching the repo.
+#
+# Override any single value at runtime with TREECOVER_<KEY>, e.g.
+#   TREECOVER_PREDICTIONS_ROOT=/mnt/hdd/Germany python scripts/06_tile_statistics.py --all
+#
+# The values below are the ones the study actually ran on, kept as a worked
+# example. Three machines were involved:
+#   /tf/...            training/inference container
+#   /media/sizhuo/...  external HDD holding masks and comparison products
+#   /data/...          merge/publication host
+
+# ── Model predictions ────────────────────────────────────────────────────────
+# Layout: <predictions_root>/<STATE>/<YEAR>/predictions/<UTM_TILE>/*_pred.tif
+predictions_root: /tf/Germany_Tree_Cover_Map/Germany
+
+
+# ── Source imagery ───────────────────────────────────────────────────────────
+# Root of the raw digital orthophotos, searched recursively.
+ortho_root: /tf/Mapping_Tree_Cover_with_Orthophotos/data/orthos
+
+# ── Training data ────────────────────────────────────────────────────────────
+training_root: /tf/Mapping_Tree_Cover_with_Orthophotos/data
+# Outputs of the patch-extraction step (scripts/03_prepare_patches.py).
+patches_dir: ${training_root}/patches
+weights_dir: ./weights
+
+# The published training-data package — the tile table, the label masks and
+# the patch/split tables the model was trained from. Small enough to publish
+# (128 MB); see its own README for the column meanings.
+#
+# `images` and `ndsm` are NOT in the package: 71 GB of openly licensed LGLN
+# data, re-downloadable per tile, with every URL recorded in the package's
+# logs/. Point them at your own copy — stage 3 and figure 3 need them, the
+# rest of the pipeline does not.
+training_data:
+  root: /tf/moritz_lucas/publication/training
+  tiles: ${training_data.root}/sampled_tiles_100.gpkg
+  labels: ${training_data.root}/labels
+  patches: ${training_data.root}/patches
+  images: ${training_root}/NDS/Sampling/DOP
+  ndsm: ${training_root}/NDS/Sampling/nDSM
+
+# ── Auxiliary layers for stratified sampling ─────────────────────────────────
+sampling:
+  # The state's acquisition index: one feature per flight over a 1 km tile,
+  # with a tile id, a date and a geometry. Lower Saxony's bDOM index is what
+  # the published training tiles were drawn from (scripts/01_sample_tiles.py).
+  tile_index: /tf/moritz_lucas/download_aerial_images/geojson/lgln-opengeodata-bdom20.geojson
+  # Tiles intersecting this are dropped. The published draw excluded Bremen,
+  # which is enclosed by Lower Saxony but publishes its own orthophotos.
+  # Any vector works; --exclude-where subsets it, e.g. for a GADM file.
+  exclude: ${training_root}/NDS/hb.geojson
+  # BfN Naturräume und Großlandschaften.
+  naturraum_shp: ${training_root}/Sampling/Naturraume/natbs.shp
+  # Copernicus HRL Tree Cover Density, one file per UTM tile.
+  tcd_pattern: ${training_root}/Sampling/TCD/CLMS_HRLVLCC_TCD_*.tif
+  # CORINE Land Cover 2018, 20 m.
+  clc: ${training_root}/Sampling/Corine_landcover/U2018_CLC2018_V2020_20u1.tif
+  # SRTM tiles, mosaicked to a VRT on first use.
+  srtm_dir: ${training_root}/Sampling/srtm
+  # OSM building footprints per state, EPSG:25832.
+  buildings_pattern: ${training_root}/Sampling/osm/{state_lower}_buildings_25832.parquet
+
+# ── Masks ────────────────────────────────────────────────────────────────────
+masks:
+  # OSM land polygons clipped to the German border — keeps sea pixels out.
+  land: /media/sizhuo/Other_Tree_Products/masks/germany_land_in_border.gpkg
+  # GADM 4.1 Germany, level 1 (states).
+  gadm: /media/sizhuo/Other_Tree_Products/masks/gadm41_DEU.gpkg
+
+# ── Validation ───────────────────────────────────────────────────────────────
+validation_root: ${training_root}
+# Per state: <validation_root>/<STATE>/{lidar_cache,chm_samples,tree_masks}
+lidar_cache_subdir: lidar_cache
+chm_subdir: chm_samples
+tree_mask_subdir: tree_masks
+
+# ── Outputs ──────────────────────────────────────────────────────────────────
+results_root: ./results
+figures_root: ./figures/output
+
+# ── Merge / publication ──────────────────────────────────────────────────────
+merge:
+  input_dir: /data/predictions
+  output_dir: /data/predictions_3857
+  temp_dir: /tmp/treecover_merge
