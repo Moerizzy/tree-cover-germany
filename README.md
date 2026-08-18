@@ -2,8 +2,8 @@
 
 Reference implementation for
 
-> Lucas, M., Brandt, M., Waske, B. *Overcoming seasonal heterogeneity in
-> national aerial surveys: 20 cm resolution tree cover mapping of Germany.*
+> Lucas, M., Brandt, M., Waske, B. *Overcoming heterogeneity in national
+> aerial imagery: Tree cover mapping of Germany at 20 cm.*
 > Submitted to Remote Sensing of Environment.
 
 A SegFormer model trained on openly licensed orthophotos from a **single**
@@ -13,6 +13,9 @@ leaf-on, transition and leaf-off conditions during training. Tested against
 LiDAR reference data in three other states the model reaches a tree-class
 IoU of 0.844 and F1 of 0.892. Germany's total tree cover, including trees
 outside forests, is estimated at 32.3 % (≈ 115,500 km²).
+
+**Browse the map: [trees.moritzlucas.de](https://trees.moritzlucas.de/)** — the
+full nationwide prediction in the browser, no download.
 
 ---
 
@@ -69,7 +72,9 @@ directory against the inventory in
 [`treecover.release`](src/treecover/release.py) and writes its manifest.
 
 Stages 8 and 11 both merge, and the difference matters. Stage 8 warps to
-Web Mercator for display; areas must never be computed from its output,
+Web Mercator for display — it is what the
+[online viewer](https://trees.moritzlucas.de/) serves; areas must never be
+computed from its output,
 which inflates them ~2.5× at Germany's latitude. Stage 11 copies tiles
 into their windows without resampling — the predictions already sit on the
 20 cm UTM grid — so a pixel of its output is a pixel of the model, and

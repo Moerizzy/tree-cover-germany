@@ -462,8 +462,8 @@ def _write_geojson(frame, out_dir: Path) -> None:
 README_TEMPLATE = """\
 # Tree cover of Germany — 20 cm mosaic
 
-The binary tree-cover mask of *"Overcoming seasonal heterogeneity in
-national aerial surveys: 20 cm resolution tree cover mapping of Germany"*
+The binary tree-cover mask of *"Overcoming heterogeneity in national aerial
+imagery: Tree cover mapping of Germany at 20 cm"*
 (Lucas, Brandt & Waske), merged from the per-tile predictions into a
 seamless 10 km grid.
 
