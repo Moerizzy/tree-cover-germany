@@ -1,8 +1,7 @@
 """Wall-to-wall tree cover mapping of Germany at 20 cm resolution.
 
-Reference implementation for Lucas, Brandt & Waske, *Overcoming
-heterogeneity in national aerial imagery: Tree cover mapping of Germany
-at 20 cm*.
+Reference implementation for the manuscript submitted to *Remote Sensing of
+Environment*.
 
 The pipeline runs in six stages, each with a CLI under ``scripts/``:
 

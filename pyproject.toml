@@ -11,11 +11,9 @@ readme = "README.md"
 # modern annotation syntax is used via `from __future__ import annotations`,
 # so the source reads as 3.10+ while still importing on 3.8.
 requires-python = ">=3.8"
-authors = [
-    { name = "Moritz Lucas", email = "moritz.lucas@uni-osnabrueck.de" },
-    { name = "Martin Brandt" },
-    { name = "Björn Waske" },
-]
+# Author metadata is withheld while the manuscript is under review; restore
+# it before the public release.
+authors = [{ name = "The Authors" }]
 keywords = [
     "remote sensing", "tree cover", "semantic segmentation",
     "SegFormer", "trees outside forests", "orthophotos",

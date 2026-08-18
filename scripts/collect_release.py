@@ -24,7 +24,7 @@ would hide that.
 
 Examples::
 
-    python scripts/collect_release.py --root /tf/moritz_lucas/publication
+    python scripts/collect_release.py --root /mnt/publication
 
     # Bring the figures in from wherever they were rendered
     python scripts/collect_release.py --root publication \\

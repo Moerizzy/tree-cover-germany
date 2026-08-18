@@ -34,7 +34,7 @@ weights_dir: ./weights
 # logs/. Point them at your own copy — stage 3 and figure 3 need them, the
 # rest of the pipeline does not.
 training_data:
-  root: /tf/moritz_lucas/publication/training
+  root: /mnt/publication/training
   tiles: ${training_data.root}/sampled_tiles_100.gpkg
   labels: ${training_data.root}/labels
   patches: ${training_data.root}/patches
@@ -46,7 +46,7 @@ sampling:
   # The state's acquisition index: one feature per flight over a 1 km tile,
   # with a tile id, a date and a geometry. Lower Saxony's bDOM index is what
   # the published training tiles were drawn from (scripts/01_sample_tiles.py).
-  tile_index: /tf/moritz_lucas/download_aerial_images/geojson/lgln-opengeodata-bdom20.geojson
+  tile_index: /mnt/download_aerial_images/geojson/lgln-opengeodata-bdom20.geojson
   # Tiles intersecting this are dropped. The published draw excluded Bremen,
   # which is enclosed by Lower Saxony but publishes its own orthophotos.
   # Any vector works; --exclude-where subsets it, e.g. for a GADM file.

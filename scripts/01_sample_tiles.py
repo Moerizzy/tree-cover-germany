@@ -45,7 +45,7 @@ Examples::
     # Reproduce the published draw and check it against the package
     python scripts/01_sample_tiles.py --out results/sampling \\
         --exclude .../gadm41_DEU.gpkg --exclude-where "NAME_1 == 'Bremen'" \\
-        --compare /tf/moritz_lucas/publication/training/sampled_tiles_100.gpkg
+        --compare /mnt/publication/training/sampled_tiles_100.gpkg
 """
 
 from __future__ import annotations
