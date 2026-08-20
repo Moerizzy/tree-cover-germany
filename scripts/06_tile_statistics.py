@@ -10,6 +10,18 @@ are counted twice and coastal tiles count open water as treeless land —
 both inflate the denominator. The paper's 115,202 km² of tree cover on
 356,381 km² of mapped land — 32.33 % — are computed with masking on.
 
+**Tree cover only — this reads the prediction rasters and nothing else.**
+The released ``tile_statistics_all.csv`` did not come from here: its
+``forest_ha``/``tof_ha`` columns give it away as output of the
+trees-outside-forests run, which needs a ``_tof.tif`` beside every
+prediction. 362 sound Schleswig-Holstein tiles have no such companion and
+so never reached the table, silently. Requiring only the prediction is the
+point of this script.
+
+Tiles that cannot be read are counted and written to
+``tile_statistics_failed.csv`` rather than dropped, so the archive count
+and the table always reconcile.
+
 Examples::
 
     python scripts/06_tile_statistics.py --all
@@ -106,18 +118,30 @@ def main(argv: list[str] | None = None) -> int:
     ok = [r for r in results if r.ok]
     failed = [r for r in results if not r.ok]
     print(f"\n{len(ok)}/{len(results)} tiles measured.")
+
+    out_dir = args.out or (paths.get_path("results_root", "./results") / "statistics")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # An unreadable tile is not a tile without trees. Dropping it silently
+    # shrinks the reference area and nothing in the output says so — that is
+    # how 92 truncated rasters left the published table without a trace. Every
+    # failure is written out, so archive minus table is always nameable.
+    failed_csv = out_dir / "tile_statistics_failed.csv"
     if failed:
-        print(f"{len(failed)} failed. First few:", file=sys.stderr)
+        pd.DataFrame(
+            [{"state": r.state, "year": r.year, "tile_name": r.tile_name,
+              "error": r.error} for r in failed]
+        ).to_csv(failed_csv, index=False)
+        print(f"{len(failed)} unreadable, listed in {failed_csv}", file=sys.stderr)
         for r in failed[:5]:
             print(f"  {r.state}/{r.year}/{r.tile_name}: {r.error}", file=sys.stderr)
+    elif failed_csv.exists():
+        failed_csv.unlink()  # a clean run must not leave a stale list behind
 
     if not ok:
         return 1
 
     rows = [r.as_row() for r in ok]
-    out_dir = args.out or (paths.get_path("results_root", "./results") / "statistics")
-    out_dir.mkdir(parents=True, exist_ok=True)
-
     tiles_csv = out_dir / "tile_statistics.csv"
     pd.DataFrame(rows).to_csv(tiles_csv, index=False)
 

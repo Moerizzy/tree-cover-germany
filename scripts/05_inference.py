@@ -91,8 +91,16 @@ def build_parser() -> argparse.ArgumentParser:
     run_g.add_argument("--patch-size", type=int, default=512)
     run_g.add_argument("--inner-fraction", type=float, default=0.7,
                        help="Fraction of each patch kept when stitching.")
-    run_g.add_argument("--batch-size", type=int, default=8)
-    run_g.add_argument("--workers", type=int, default=4, help="DataLoader workers.")
+    run_g.add_argument("--batch-size", type=int, default=16,
+                       help="Patches per forward pass. 16 is the original default; the "
+                            "model runs in eval mode with LayerNorm, so this changes "
+                            "throughput, not results.")
+    run_g.add_argument("--workers", type=int, default=0,
+                       help="DataLoader worker processes prefetching patches. 0 keeps "
+                            "everything in the main process — the original default, and "
+                            "the only one that works in the inference container, whose "
+                            "/dev/shm is Docker's 64 MB. Workers pass tensors through "
+                            "shared memory and die with 'No space left on device'.")
     run_g.add_argument("--device", default="cuda")
     run_g.add_argument("--no-amp", dest="amp", action="store_false",
                        help="Disable float16 autocast.")

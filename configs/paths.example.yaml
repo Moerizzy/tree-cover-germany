@@ -12,7 +12,7 @@
 
 # ── Model predictions ────────────────────────────────────────────────────────
 # Layout: <predictions_root>/<STATE>/<YEAR>/predictions/<UTM_TILE>/*_pred.tif
-predictions_root: /tf/Germany_Tree_Cover_Map/Germany
+predictions_root: /tf/Germany
 
 
 # ── Source imagery ───────────────────────────────────────────────────────────
@@ -65,9 +65,9 @@ sampling:
 # ── Masks ────────────────────────────────────────────────────────────────────
 masks:
   # OSM land polygons clipped to the German border — keeps sea pixels out.
-  land: /mnt/products/Other_Tree_Products/masks/germany_land_in_border.gpkg
+  land: /tf/moritz_lucas/publication/masks/germany_land_in_border.gpkg
   # GADM 4.1 Germany, level 1 (states).
-  gadm: /mnt/products/Other_Tree_Products/masks/gadm41_DEU.gpkg
+  gadm: /tf/moritz_lucas/publication/masks/gadm41_DEU.gpkg
 
 # ── Validation ───────────────────────────────────────────────────────────────
 validation_root: ${training_root}
